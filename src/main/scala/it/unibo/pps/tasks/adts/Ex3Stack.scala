@@ -22,9 +22,23 @@ object Ex3Stacks:
       def asSequence(): Sequence[A]
 
   object StackImpl extends StackADT:
-    type Stack[A] = Nothing
-    def empty[A]: Stack[A] = ???
+    case class StackImpl[A](elements: Sequence[A])
+
+    type Stack[A] = StackImpl[A]
+
+    def empty[A]: Stack[A] =
+      StackImpl(Nil())
+
     extension [A](stack: Stack[A])
-      def push(a: A): Stack[A] = ???
-      def pop(): Optional[(A, Stack[A])] = ???
-      def asSequence(): Sequence[A] = ???
+      def push(a: A): Stack[A] =
+        StackImpl(Cons(a, stack.elements))
+
+      def pop(): Optional[(A, Stack[A])] =
+        stack.elements match
+          case Nil() =>
+            None()
+          case Cons(head, tail) =>
+            Just((head, StackImpl(tail)))
+
+      def asSequence(): Sequence[A] =
+        stack.elements
