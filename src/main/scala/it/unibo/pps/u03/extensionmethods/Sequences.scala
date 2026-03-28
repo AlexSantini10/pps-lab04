@@ -24,6 +24,25 @@ object Sequences:
         case Cons(_, t)            => t.filter(pred)
         case Nil()                 => Nil()
 
+      def contains(elem: A): Boolean = l match
+        case Cons(h, t) if h == elem => true
+        case Cons(_, t)              => t.contains(elem)
+        case Nil()                   => false
+
+      def distinct(): Sequence[A] = l match
+        case Cons(h, t) if t.contains(h) => t.distinct()
+        case Cons(h, t)                    => Cons(h, t.distinct())
+        case Nil()                         => Nil()
+
+      def isEmpty(): Boolean = l match
+        case Cons(_, _) => false
+        case Nil()      => true
+
+      // Inserisce un nuovo elemento alla fine della sequenza
+      def insert(elem: A): Sequence[A] = l match
+        case Cons(h, t) => Cons(h, t.insert(elem))
+        case Nil()      => Cons(elem, Nil())
+
     def of[A](n: Int, a: A): Sequence[A] =
       if (n == 0) then Nil[A]() else Cons(a, of(n - 1, a))
 

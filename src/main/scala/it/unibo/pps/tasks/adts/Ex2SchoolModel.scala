@@ -111,22 +111,29 @@ object SchoolModel:
        *
        */
       def hasCourse(name: String): Boolean
-  object BasicSchoolModule extends SchoolModule:
-    override type School = Nothing
-    override type Teacher = Nothing
-    override type Course = Nothing
 
-    def teacher(name: String): Teacher = ???
-    def course(name: String): Course = ???
-    def emptySchool: School = ???
+
+  object BasicSchoolModule extends SchoolModule:
+    case class TeacherImpl(name: String)
+    case class CourseImpl(name: String)
+    case class SchoolImpl(teacherToCourses: Sequence[(Teacher, Course)])
+
+    override type School = SchoolImpl
+    override type Teacher = TeacherImpl
+    override type Course = CourseImpl
+
+    def teacher(name: String): Teacher = TeacherImpl(name)
+    def course(name: String): Course = CourseImpl(name)
+    def emptySchool: School = SchoolImpl(Nil())
 
     extension (school: School)
-      def courses: Sequence[String] = ???
-      def teachers: Sequence[String] = ???
-      def setTeacherToCourse(teacher: Teacher, course: Course): School = ???
-      def coursesOfATeacher(teacher: Teacher): Sequence[Course] = ???
-      def hasTeacher(name: String): Boolean = ???
-      def hasCourse(name: String): Boolean = ???
+      def courses: Sequence[String] = school.teacherToCourses.map((t, c) => c.name).distinct()
+      def teachers: Sequence[String] = school.teacherToCourses.map((t, c) => t.name).distinct()
+      def setTeacherToCourse(teacher: Teacher, course: Course): School = SchoolImpl(school.teacherToCourses.insert((teacher, course)))
+      def coursesOfATeacher(teacher: Teacher): Sequence[Course] = school.teacherToCourses.filter((t, c) => t == teacher).map((t, c) => c)
+      def hasTeacher(name: String): Boolean = !school.teacherToCourses.filter((t, c) => t.name == name).isEmpty()
+      def hasCourse(name: String): Boolean = !school.teacherToCourses.filter((t, c) => c.name == name).isEmpty()
+
 @main def examples(): Unit =
   import SchoolModel.BasicSchoolModule.*
   val school = emptySchool

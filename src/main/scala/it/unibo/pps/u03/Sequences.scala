@@ -21,6 +21,16 @@ object Sequences: // Essentially, generic linkedlists
       case Cons(_, t)            => filter(t)(pred)
       case Nil()                 => Nil()
 
+    def contains[A](l: Sequence[A])(elem: A): Boolean = l match
+      case Cons(h, t) if h == elem => true
+      case Cons(_, t)              => contains(t)(elem)
+      case Nil()                   => false
+
+    def distinct[A](l: Sequence[A]): Sequence[A] = l match
+      case Cons(h, t) if contains(t)(h) => distinct(t)
+      case Cons(h, t)                    => Cons(h, distinct(t))
+      case Nil()                         => Nil()
+
 @main def trySequences =
   import Sequences.* 
   val l = Sequence.Cons(10, Sequence.Cons(20, Sequence.Cons(30, Sequence.Nil())))
