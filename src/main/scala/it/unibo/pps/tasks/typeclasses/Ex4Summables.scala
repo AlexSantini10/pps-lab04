@@ -1,8 +1,8 @@
 package it.unibo.pps.tasks.typeclasses
 
-import it.unibo.pps.u03.Sequences.Sequence, Sequence.*
+import it.unibo.pps.u03.extensionmethods.Sequences.Sequence, Sequence.*
 
-/*  Exercise 4: 
+/*  Exercise 4:
  *  - Complete the implementation of ad-hoc polymorphic sumAll, using summable.sum and summable.zero
  *  - Write givens also for Summable[Double], Summable[String]
  *  - Uncomment in the main and check if everything works
