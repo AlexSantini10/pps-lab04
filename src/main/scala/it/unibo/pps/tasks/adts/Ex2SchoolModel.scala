@@ -127,12 +127,44 @@ object SchoolModel:
     def emptySchool: School = SchoolImpl(Nil())
 
     extension (school: School)
-      def courses: Sequence[String] = school.teacherToCourses.map((t, c) => c.name).distinct()
-      def teachers: Sequence[String] = school.teacherToCourses.map((t, c) => t.name).distinct()
-      def setTeacherToCourse(teacher: Teacher, course: Course): School = SchoolImpl(school.teacherToCourses.insert((teacher, course)))
-      def coursesOfATeacher(teacher: Teacher): Sequence[Course] = school.teacherToCourses.filter((t, c) => t == teacher).map((t, c) => c)
-      def hasTeacher(name: String): Boolean = !school.teacherToCourses.filter((t, c) => t.name == name).isEmpty()
-      def hasCourse(name: String): Boolean = !school.teacherToCourses.filter((t, c) => c.name == name).isEmpty()
+      def courses: Sequence[String] = school match
+        case SchoolImpl(teacherToCourses) =>
+          teacherToCourses
+            .map((_, c) => c match
+              case CourseImpl(courseName) => courseName
+            )
+            .distinct()
+
+      def teachers: Sequence[String] = school match
+        case SchoolImpl(teacherToCourses) =>
+          teacherToCourses
+            .map((t, _) => t match
+              case TeacherImpl(teacherName) => teacherName
+            )
+            .distinct()
+
+      def setTeacherToCourse(teacher: Teacher, course: Course): School = school match
+        case SchoolImpl(teacherToCourses) => SchoolImpl(teacherToCourses.insert((teacher, course)))
+
+      def coursesOfATeacher(teacher: Teacher): Sequence[Course] = school match
+        case SchoolImpl(teacherToCourses) =>
+          teacherToCourses.filter((t, _) => t == teacher).map((_, c) => c)
+
+      def hasTeacher(name: String): Boolean = school match
+        case SchoolImpl(teacherToCourses) =>
+          !teacherToCourses
+            .filter((t, _) => t match
+              case TeacherImpl(teacherName) => teacherName == name
+            )
+            .isEmpty()
+
+      def hasCourse(name: String): Boolean = school match
+        case SchoolImpl(teacherToCourses) =>
+          !teacherToCourses
+            .filter((_, c) => c match
+              case CourseImpl(courseName) => courseName == name
+            )
+            .isEmpty()
 
 @main def examples(): Unit =
   import SchoolModel.BasicSchoolModule.*
