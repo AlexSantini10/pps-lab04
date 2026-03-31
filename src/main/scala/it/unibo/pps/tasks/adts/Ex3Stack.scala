@@ -30,15 +30,16 @@ object Ex3Stacks:
       StackImpl(Nil())
 
     extension [A](stack: Stack[A])
-      def push(a: A): Stack[A] =
-        StackImpl(Cons(a, stack.elements))
+      def push(a: A): Stack[A] = stack match
+        case StackImpl(elements) => StackImpl(Cons(a, elements))
 
-      def pop(): Optional[(A, Stack[A])] =
-        stack.elements match
-          case Nil() =>
-            None()
-          case Cons(head, tail) =>
-            Just((head, StackImpl(tail)))
+      def pop(): Optional[(A, Stack[A])] = stack match
+        case StackImpl(elements) =>
+          elements match
+            case Nil() =>
+              None()
+            case Cons(head, tail) =>
+              Just((head, StackImpl(tail)))
 
-      def asSequence(): Sequence[A] =
-        stack.elements
+      def asSequence(): Sequence[A] = stack match
+        case StackImpl(elements) => elements
