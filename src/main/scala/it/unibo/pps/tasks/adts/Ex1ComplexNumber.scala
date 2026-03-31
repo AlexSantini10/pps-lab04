@@ -24,13 +24,21 @@ object Ex1ComplexNumbers:
     type Complex = ComplexImpl
     def complex(re: Double, im: Double): Complex = ComplexImpl(re, im)
     extension (complex: Complex)
-      def re(): Double = complex.re
-      def im(): Double = complex.im
-      def sum(other: Complex): Complex = ComplexImpl(complex.re + other.re, complex.im + other.im)
-      def subtract(other: Complex): Complex = ComplexImpl(complex.re - other.re, complex.im - other.im)
-      def asString(): String = complex match
-        case c if c.im == 0 => s"${c.re}"
-        case c if c.re == 0 => s"${c.im}i"
-        case c => s"${c.re} ${if c.im > 0 then "+" else "-"} ${math.abs(c.im)}i"
+      def re(): Double = complex match
+        case ComplexImpl(real, _) => real
 
-      // versione alternativa s"(${complex.re}, ${complex.im})"
+      def im(): Double = complex match
+        case ComplexImpl(_, imag) => imag
+
+      def sum(other: Complex): Complex = (complex, other) match
+        case (ComplexImpl(re1, im1), ComplexImpl(re2, im2)) => ComplexImpl(re1 + re2, im1 + im2)
+
+      def subtract(other: Complex): Complex = (complex, other) match
+        case (ComplexImpl(re1, im1), ComplexImpl(re2, im2)) => ComplexImpl(re1 - re2, im1 - im2)
+
+      def asString(): String = complex match
+        case ComplexImpl(real, imag) if imag == 0 => s"$real"
+        case ComplexImpl(real, imag) if real == 0 => s"${imag}i"
+        case ComplexImpl(real, imag) => s"$real ${if imag > 0 then "+" else "-"} ${math.abs(imag)}i"
+
+      // versione alternativa con match: s"(real, imag)"
